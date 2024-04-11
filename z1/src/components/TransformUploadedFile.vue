@@ -16,6 +16,8 @@ const processedText = ref('');
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
+  if (!file) return;
+
   const reader = new FileReader();
 
   reader.onload = () => {
@@ -29,31 +31,41 @@ const handleFileUpload = (event) => {
 
 const processText = () => {
   const text = uploadedText.value;
+  if (!text) return;
+
+  const wordsRegex = /[\p{L}\p{N}]+|[^\p{L}\p{N}]+/gu;
+  const words = text.match(wordsRegex);
+
   let processed = '';
 
-  if (text) {
-    const lines = text.split('\n');
-
-    lines.forEach((line) => {
-      const words = line.split(' ');
-      const processedLine = words.map(word => {
-        if (word.length <= 2) {
-          return word;
-        }
-
-        const firstChar = word[0];
-        const lastChar = word[word.length - 1];
-        const middle = word.substring(1, word.length - 1);
-        const shuffledMiddle = shuffleString(middle);
-
-        return `${firstChar}${shuffledMiddle}${lastChar}`;
-      }).join(' ');
-
-      processed += processedLine + '\n';
-    });
-  }
+  words.forEach(word => {
+    if (word.match(/[\p{L}\p{N}]/gu)) {
+      const processedWord = processWord(word);
+      processed += processedWord;
+    } else {
+      processed += word;
+    }
+  });
 
   processedText.value = processed;
+};
+
+const processWord = (word) => {
+  const firstChar = word[0];
+  const firstCharUpperCase = firstChar.toUpperCase();
+  const isFirstCharUpperCase = firstChar === firstCharUpperCase;
+
+  if (word.length <= 2) {
+    return word;
+  }
+
+  const lastChar = word[word.length - 1];
+  const middle = word.substring(1, word.length - 1);
+  const shuffledMiddle = shuffleString(middle);
+
+  const firstCharProcessed = isFirstCharUpperCase ? firstCharUpperCase : firstChar.toLowerCase();
+
+  return `${firstCharProcessed}${shuffledMiddle}${lastChar}`;
 };
 
 const shuffleString = (str) => {
@@ -64,6 +76,7 @@ const shuffleString = (str) => {
   }
   return array.join('');
 };
+
 </script>
 
 <style scoped>
