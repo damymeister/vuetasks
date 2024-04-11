@@ -28,11 +28,11 @@
               <span v-if="!user.isEditing">{{ user[header.value] }}</span>
               <input v-else v-model="user[header.value]" class="input" />
             </template>
-          </td>
-          <td>
-            <button v-if="!user.isEditing" @click="toggleEdit(user)" class="button edit-button">Edit</button>
-            <button v-else @click="saveEdit(user)" class="button save-button">Save</button>
-            <button @click="deleteUser(user)" class="button delete-button">Delete</button>
+            <template v-else>
+              <button v-if="!user.isEditing" @click="toggleEdit(user)" class="button edit-button">Edit</button>
+              <button v-else @click="saveEdit(user)" class="button save-button">Save</button>
+              <button @click="deleteUser(user)" class="button delete-button">Delete</button>
+            </template>
           </td>
         </tr>
       </tbody>
@@ -57,7 +57,7 @@ export default {
       { text: 'Email', value: 'email' },
       { text: 'Gender', value: 'gender' },
       { text: 'Status', value: 'status' },
-      { text: 'Actions', value: 'actions', sortable: false },
+      { text: 'Actions', value: 'actions'},
     ];
     const newUser = ref({
       name: '',
